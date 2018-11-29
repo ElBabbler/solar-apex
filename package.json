@@ -1,0 +1,19 @@
+{
+  "name": "solar-comets",
+  "version": "0.0.1",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/ElBabbler/solar-apex.git",
+  "keywords": [
+    "Electron",
+    "demo"
+  ],
+  "author": "GitHub",
+  "dependencies": {
+    "electron": "^3.0.10",
+    "mathjs": "^5.2.3"
+  }
+}
