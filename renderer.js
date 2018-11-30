@@ -27,16 +27,58 @@ function drawAllObjects() {
 
 function drawObject(object) {
     var ctx = canvas.getContext('2d');
+
     ctx.fillStyle = object.type;
-    ctx.fillRect(object.x - 1, object.y - 1, 3, 3);
+
+    const pltX = object.x - 1;
+    const pltY = (object.y - 1) * CANVAS_SIZE.height / 180 + CANVAS_SIZE.height / 2;
+
+    ctx.fillRect(pltX, pltY, 3, 3);
 }
 
 function uploadObject() {
-    const inputFile = dialog.showOpenDialog({ properties: [ 'openFile', 'openfile' ] });
+    const inputFile = dialog.showOpenDialog({properties: ['openFile', 'openfile']});
     console.log(JSON.stringify(inputFile));
     fs.readFile(inputFile[0], (err, data) => {
         if (err) throw err;
-        console.log(JSON.parse(data));
-        objects.push(...JSON.parse(data));
+        // console.log(data.toString());
+        const lines = data.toString().split(/\r?\n/g);
+        const transCatalog = lines
+            .map(l => l.split('|'))
+            .map(arr => {
+                return {
+                    x: parseFloat(arr[8]),
+                    y: parseFloat(arr[9]),
+                    type: bvToClass(arr[37])
+                }
+            });
+        // console.log(transCatalog);
+        objects.push(...transCatalog);
     });
 }
+
+function bvToClass(bv) {
+    if (bv < -0.3) {
+        // return 'O';
+        return 'blue';
+    } else if (bv < -0.02) {
+        // return 'B';
+        return 'while';
+    } else if (bv < 0.3) {
+        // return 'A';
+        return 'while';
+    } else if (bv < 0.58) {
+        // return 'F';
+        return 'yellow';
+    } else if (bv < 0.81) {
+        return 'yellow';
+        // return 'G';
+    } else if (bv < 1.4) {
+        // return 'K';
+        return 'orange';
+    } else {
+        // return 'M';
+        return 'red';
+    }
+}
+
