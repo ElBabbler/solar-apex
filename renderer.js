@@ -8,25 +8,31 @@ var canvas;
 
 function init() {
     canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // objects.push(...[{ x: 10, y: 12, type: 'red' }, { x: 120, y: 172, type: 'blue' }, { x: 300, y: 172, type: 'green' }]);
-
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    ctx.strokeStyle = 'rgba(0,153,255,0.2)';
-    ctx.save();
     setInterval(drawAllObjects, 10);
 }
 
 function drawAllObjects() {
     const ctx = canvas.getContext('2d');
-    // ctx.globalCompositeOperation = 'destination-over';
     ctx.clearRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height); // clear canvas
+
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height);
+
     objects
         .filter(o => specFilters[o.type])
         .forEach(o => drawObject(o));
+
+    drawAxes(ctx);
+}
+
+function drawAxes(ctx) {
+    ctx.font = "14px serif";
+    ctx.fillStyle = 'white';
+    ctx.fillText('RAdeg -->', CANVAS_SIZE.width - 80, CANVAS_SIZE.height - 10);
+    ctx.save();
+    ctx.rotate(Math.PI*3/2);
+    ctx.fillText('DEdeg -->', -70, 17);
+    ctx.restore();
 }
 
 function drawObject(object) {
@@ -97,25 +103,6 @@ const specFilters = {
     M: true,
 };
 
-function selectO() {
-    specFilters.O = !specFilters.O;
+function selectType(type) {
+    specFilters[type] = !specFilters[type];
 }
-function selectA() {
-    specFilters.A = !specFilters.A;
-}
-function selectB() {
-    specFilters.B = !specFilters.B;
-}
-function selectG() {
-    specFilters.G = !specFilters.G;
-}
-function selectF() {
-    specFilters.F = !specFilters.F;
-}
-function selectK() {
-    specFilters.K = !specFilters.K;
-}
-function selectM() {
-    specFilters.M = !specFilters.M;
-}
-
