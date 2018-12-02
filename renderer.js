@@ -20,20 +20,24 @@ function init() {
 
 function drawAllObjects() {
     const ctx = canvas.getContext('2d');
-    ctx.globalCompositeOperation = 'destination-over';
+    // ctx.globalCompositeOperation = 'destination-over';
     ctx.clearRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height); // clear canvas
-    objects.forEach(o => drawObject(o));
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, CANVAS_SIZE.width, CANVAS_SIZE.height);
+    objects
+        .filter(o => specFilters[o.type])
+        .forEach(o => drawObject(o));
 }
 
 function drawObject(object) {
     var ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = object.type;
+    ctx.fillStyle = classColorMap[object.type];
 
-    const pltX = object.x - 1;
-    const pltY = (object.y - 1) * CANVAS_SIZE.height / 180 + CANVAS_SIZE.height / 2;
+    const pltX = object.x;
+    const pltY = object.y * CANVAS_SIZE.height / 180 + CANVAS_SIZE.height / 2;
 
-    ctx.fillRect(pltX, pltY, 3, 3);
+    ctx.fillRect(pltX, pltY, 1, 1);
 }
 
 function uploadObject() {
@@ -41,7 +45,6 @@ function uploadObject() {
     console.log(JSON.stringify(inputFile));
     fs.readFile(inputFile[0], (err, data) => {
         if (err) throw err;
-        // console.log(data.toString());
         const lines = data.toString().split(/\r?\n/g);
         const transCatalog = lines
             .map(l => l.split('|'))
@@ -52,33 +55,67 @@ function uploadObject() {
                     type: bvToClass(arr[37])
                 }
             });
-        // console.log(transCatalog);
         objects.push(...transCatalog);
     });
 }
 
+const classColorMap = {
+    O: '#000099',
+    B: '#306050',
+    A: '#999999',
+    F: '#999900',
+    G: '#999010',
+    K: '#998000',
+    M: '#990000',
+};
+
 function bvToClass(bv) {
     if (bv < -0.3) {
-        // return 'O';
-        return 'blue';
+        return 'O';
     } else if (bv < -0.02) {
-        // return 'B';
-        return 'while';
+        return 'B';
     } else if (bv < 0.3) {
-        // return 'A';
-        return 'while';
+        return 'A';
     } else if (bv < 0.58) {
-        // return 'F';
-        return 'yellow';
+        return 'F';
     } else if (bv < 0.81) {
-        return 'yellow';
-        // return 'G';
+        return 'G';
     } else if (bv < 1.4) {
-        // return 'K';
-        return 'orange';
+        return 'K';
     } else {
-        // return 'M';
-        return 'red';
+        return 'M';
     }
+}
+
+const specFilters = {
+    O: true,
+    B: true,
+    A: true,
+    F: true,
+    G: true,
+    K: true,
+    M: true,
+};
+
+function selectO() {
+    specFilters.O = !specFilters.O;
+}
+function selectA() {
+    specFilters.A = !specFilters.A;
+}
+function selectB() {
+    specFilters.B = !specFilters.B;
+}
+function selectG() {
+    specFilters.G = !specFilters.G;
+}
+function selectF() {
+    specFilters.F = !specFilters.F;
+}
+function selectK() {
+    specFilters.K = !specFilters.K;
+}
+function selectM() {
+    specFilters.M = !specFilters.M;
 }
 
